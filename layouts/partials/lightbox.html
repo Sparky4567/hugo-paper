@@ -1,0 +1,33 @@
+<script defer="defer">
+	window.addEventListener("load",()=>{
+		class imageGallery{
+		constructor(){
+			this.imageSelector = document.querySelectorAll(".post > img")
+			console.log(this.imageSelector)
+			this.title = `newImage`
+		}
+
+		reconstruct(){
+			this.imageSelector.forEach(element => {
+				if(!String(element.src).includes("svg")){
+					if(element.offsetWidth > 200){
+				let newElement = `<a href="`+element.src+`" data-lightbox="image-1" data-title="`+this.title+`">`+element.parentNode.innerHTML+`</a>`;
+				let parent = element.parentNode;
+				parent.innerHTML = newElement;
+				}
+				}
+				
+			});
+			let s = document.createElement("script");
+			s.defer = "defer";
+			s.src = "/lightbox.js";
+			document.body.appendChild(s);
+		}
+	}
+	if(String(window.location.pathname).includes("/posts/")){
+		let s = new imageGallery();
+		s.reconstruct();
+	}
+	
+	})
+</script>

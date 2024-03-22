@@ -18,8 +18,22 @@
     </div>
     {{ end }}
   </header>
-
-  <section>{{ .Content }}</section>
+  <div>
+    <div>
+  <p>Reading time: {{ math.Round (div (countwords .Content) 220.0) }} minutes</p>
+  <div>{{ partial "inlineshare.html" . }}</div>
+  <div>{{ partial "viewcount.html" . }}</div>
+  <section class="post">{{ .Content }}</section>
+  <div>{{ partial "follow_it.html" . }}</div>
+  <div>{{ partial "license.html" . }}</div>
+  <div>{{ partial "qr_embed.html" . }}</div>
+  <div>{{ partial "licenseelement.html" . }}</div>
+  {{ partial "sharethis.html" . }}
+  {{ partial "facebook.html" . }}
+  {{ partial "jq.html" . }}
+  {{ partial "lightbox.html" . }}
+</div>
+  </div>
 
   <!-- Post Tags -->
   {{ if .Params.tags }}
