@@ -2,18 +2,22 @@
 	window.addEventListener("load",()=>{
 		class imageGallery{
 		constructor(){
-			this.imageSelector = document.querySelectorAll(".post > img")
-			console.log(this.imageSelector)
+			this.imageSelector = document.querySelectorAll(".posts > img")
 			this.title = `newImage`
 		}
 
 		reconstruct(){
 			this.imageSelector.forEach(element => {
-				if(!String(element.src).includes("svg")){
-					if(element.offsetWidth > 200){
-				let newElement = `<a href="`+element.src+`" data-lightbox="image-1" data-title="`+this.title+`">`+element.parentNode.innerHTML+`</a>`;
-				let parent = element.parentNode;
-				parent.innerHTML = newElement;
+				console.log(element)
+				if(!String(element.src).includes("svg") && String(element.src).includes("/images/")){
+					if(element.offsetWidth > 200){ 
+				let previousHtml = element.parentNode.innerHTML;
+				let newElement = `<a href="${element.src}" data-lightbox="image-1" data-title="${this.title}"><img src="${element.src}"></a>`;
+				let parentNode = element.parentNode;
+				console.log(previousHtml)
+				console.log(element)
+				let newHtml = String(previousHtml).replace(String(element.outerHTML),newElement)
+			    parentNode.innerHTML = newHtml
 				}
 				}
 				
