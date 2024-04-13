@@ -1,0 +1,7 @@
+{{ if .Get "src" }}
+  {{ $myVariable := .Get "src" }}
+  <figure>
+    <audio controls src="{{ $myVariable }}"></audio>
+    <a href="{{ $myVariable }}"> Download audio </a>
+  </figure>
+{{ end }}
