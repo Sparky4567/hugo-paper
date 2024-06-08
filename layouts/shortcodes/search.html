@@ -1,0 +1,118 @@
+<input id="searchField" style="width: 100%; height: 4rem;color:#333;padding: 1rem;" placeholder="Search for..."></input>
+<div id="searchcont" style="width: 100%;height: auto;display: block;margin-bottom:5rem;margin-top:2rem;"></div>
+
+<script async>
+    class searchfunc{
+        constructor(){
+            this.feed = null
+            this.feedItems = null
+        }
+
+        constructFeedUrl(){
+            const hostname = window.location.origin;
+            const indexRss = `index.xml`
+            this.feed =`${hostname}/${indexRss}`
+            return this.feed
+        }
+
+        async fetchAndParseRSS(rssUrl) {
+        try {
+           
+            const response = await fetch(rssUrl);
+            const xmlData = await response.text();
+
+            // Parse the XML using DOMParser
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlData, "application/xml");
+
+            // Extract feed details
+            const channel = xmlDoc.querySelector("channel");
+            const feedTitle = channel.querySelector("title").textContent;
+            const feedLink = channel.querySelector("link").textContent;
+            const feedDescription = channel.querySelector("description").textContent;
+            // Iterate over feed entries
+            const items = xmlDoc.querySelectorAll("item");
+           return items
+        } catch (error) {
+            console.error("Error fetching or parsing RSS feed:", error);
+        }
+    }
+
+        feedItemPopulation(){
+            const containerSelector = document.querySelector("#searchcont")
+            containerSelector.innerHTML = ""
+            this.feedItems.forEach(item => {
+            const title = item.querySelector("title").textContent;
+            const link = item.querySelector("link").textContent;
+            const pubDate = item.querySelector("pubDate").textContent;
+            const itemDescription = `<div style='width:100%;height:auto;display:block;color:white;'>
+                <h4>${title}</h4>
+                <h5>Published: ${pubDate}</h5>
+                <a href='${link}'>Visit article</a>
+                </div>`
+            let article = document.createElement("div")
+            article.innerHTML += itemDescription
+            containerSelector.appendChild(article)
+        });
+        }
+
+        populateSearchItems(value){
+            const containerSelector = document.querySelector("#searchcont")
+            value = String(value).toLowerCase().trim()
+            containerSelector.innerHTML=""
+            this.feedItems.forEach(item => {
+                const description = String(item.querySelector("description").textContent).toLowerCase();
+                if(description.includes(value)){
+                    const title = item.querySelector("title").textContent;
+                    const link = item.querySelector("link").textContent;
+                    const pubDate = item.querySelector("pubDate").textContent;
+                    const itemDescription = `<div style='100%;height:auto';'>
+                        <h4>${title}</h4>
+                        <h5>Published: ${pubDate}</h5>
+                        <h5>Includes phrase: ${value}</h5>
+                        <a href='${link}' target="_blank">Visit article</a>
+                        </div>`
+                        let article = document.createElement("div")
+                        article.innerHTML += itemDescription
+                    containerSelector.appendChild(article)
+                }
+           
+        });
+        }
+
+        searchFunction(value){
+            if(value!==""){
+                this.feedItems !== null ? this.populateSearchItems(value) : console.log("no items")
+
+            }
+            else{
+                this.feedItemPopulation()
+            }
+        }
+
+        getfeedInfo(){
+            this.observeInput()
+            this.constructFeedUrl()
+            this.feed !== null ? this.fetchAndParseRSS(this.feed).then((data)=>{
+                this.feedItems = data
+                this.feedItems !== null ? this.feedItemPopulation() : console.log("no feed items")
+            }) : console.log("feed undefined") 
+            
+        }
+
+        observeInput(){
+            const searchField = document.querySelector("#searchField")
+            searchField.addEventListener("keyup",(e)=>{
+                let value = e.currentTarget.value;
+                this.searchFunction(String(value).toLowerCase())
+            })
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded",()=>{
+    const search = new searchfunc()
+    search.getfeedInfo()
+    })
+    
+
+</script>
